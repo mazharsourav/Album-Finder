@@ -1,5 +1,7 @@
 # 💿 Album Finder
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-1ED760?style=for-the-badge&logo=vercel&logoColor=white)](https://albumfinder-app.vercel.app)
+
 Search any musical artist and browse their full discography — cover art,
 release types, tracklists, and links straight to Spotify — in a fast,
 keyboard-friendly UI that adapts to light and dark mode.
