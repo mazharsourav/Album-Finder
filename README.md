@@ -112,10 +112,13 @@ before being surfaced to the client.
 
 ```
 Album Finder/
+├─ api/
+│  └─ index.js       # Vercel serverless function entry (wraps server/app.js)
 ├─ server/
-│  ├─ index.js       # Express app & routes
-│  ├─ spotify.js     # Spotify API client: auth, search, albums, caching
-│  └─ load-env.js     # Minimal .env loader (no external dependency)
+│  ├─ app.js          # Express app + all /api routes (shared by both entry points)
+│  ├─ index.js        # Local dev / single-service entry: app.js + static dist/ + listen()
+│  ├─ spotify.js       # Spotify API client: auth, search, albums, caching
+│  └─ load-env.js      # Minimal .env loader (no external dependency)
 ├─ src/
 │  ├─ App.jsx         # UI: search, filters, sort, album grid, detail modal
 │  ├─ App.css          # Component styles
@@ -124,21 +127,35 @@ Album Finder/
 ├─ public/             # Static assets (favicon)
 ├─ index.html
 ├─ vite.config.js       # Dev server + /api proxy
+├─ vercel.json           # Routes /api/* to the serverless function
 └─ .env.example
 ```
 
 ## 🛫 Deploying
 
-The client and server are separate concerns:
+The API routes live in [`server/app.js`](server/app.js) and are shared by two
+entry points, so the same backend logic runs unmodified on either platform:
 
-1. **Build the client:** `npm run build` outputs static assets to `dist/`.
-2. **Run the server:** `npm start` serves the API on `PORT` (default `3001`).
-   Set `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET` as real environment
-   variables in production (the built-in `.env` loader is a local-dev
-   convenience and is skipped if the file isn't present).
-3. Point your host's reverse proxy (or a platform like Render, Railway, or a
-   VPS with Nginx) at the API for `/api/*` and serve `dist/` for everything
-   else — mirroring the `vite.config.js` dev proxy.
+### Vercel (recommended)
+
+1. Import this repo at [vercel.com/new](https://vercel.com/new) — the Vite
+   frontend is auto-detected and built (`vite build` → `dist/`), and
+   [`api/index.js`](api/index.js) deploys as a serverless function.
+   [`vercel.json`](vercel.json) rewrites every `/api/*` request to that
+   function, which resolves the sub-route internally.
+2. In the project's **Settings → Environment Variables**, add
+   `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET`.
+3. Deploy. No other configuration needed.
+
+### Render / Railway / any Node host (single service)
+
+1. **Build command:** `npm install && npm run build`
+2. **Start command:** `npm start` — runs [`server/index.js`](server/index.js),
+   which serves the built `dist/` folder *and* the API from one process on
+   `PORT` (default `3001`).
+3. Set `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET` as real environment
+   variables (the built-in `.env` loader is a local-dev convenience and is
+   skipped if the file isn't present).
 
 ## 📄 License
 
