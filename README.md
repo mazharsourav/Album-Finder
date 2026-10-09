@@ -1,164 +1,172 @@
-# 💿 Album Finder
+<div align="center">
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-1ED760?style=for-the-badge&logo=vercel&logoColor=white)](https://albumfinder-app.vercel.app)
+# Album Finder
 
-Search any musical artist and browse their full discography — cover art,
-release types, tracklists, and links straight to Spotify — in a fast,
-keyboard-friendly UI that adapts to light and dark mode.
+**Search any artist and browse their full discography: cover art, release types, tracklists, and links to Spotify.**
 
-Built with **React 18 + Vite** on the frontend and a tiny **Express** backend
-that handles the Spotify token exchange, so no API secret ever reaches the
-browser.
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Open_the_app-1ED760?style=for-the-badge&logo=spotify&logoColor=white&labelColor=191414)](https://albumfinder-app.vercel.app)
+
+<br />
+
+![Album Finder showing Radiohead's discography in dark mode](docs/screenshot.png)
+
+</div>
 
 ---
 
-## ✨ Features
+Album Finder is a React 18 + Vite frontend with a small Express backend. The
+backend does the Spotify token exchange, so your API secret never reaches the
+browser. It runs locally as one command and deploys to Vercel with no extra
+configuration.
 
-- **Artist search** — type a name and get their top matching artist, photo,
-  and full release list in one request. Try-it suggestion chips (Radiohead,
-  Kendrick Lamar, Daft Punk, and more) make the empty state useful.
-- **Filter by release type** — toggle **Albums**, **Singles & EPs**, and
-  **Compilations** independently; results refetch instantly as you change the
-  selection (at least one type always stays active).
-- **Sort control** — order releases **Newest first**, **Oldest first**, or
-  **Title A–Z**.
-- **Album detail modal** — click any release to see its full, paginated
-  tracklist with track numbers (disc-aware for multi-disc albums), duration,
-  explicit tags, per-track Spotify links, label, and release year. Closes on
-  `Esc` or backdrop click.
-- **Shareable search URLs** — a search sets `?q=` in the address bar, so
-  results can be bookmarked or shared and reload on first visit.
-- **Loading, empty, and error states** — animated skeleton cards while
-  fetching, a friendly empty state when nothing matches, and a retry button
-  if a request fails.
-- **Light & dark mode** — follows the OS/browser color scheme automatically,
-  with a Spotify-green accent in both themes.
-- **Responsive, accessible UI** — fluid album grid, keyboard-navigable
-  controls, `aria` labels throughout, and reduced-motion support.
-- **Resilient backend** — caches the Spotify access token and recent search
-  results in memory, retries once on `429` rate limits (respecting
-  `Retry-After`), transparently paginates artist albums and album tracklists,
-  and de-duplicates repeat releases (e.g. same album across markets).
+## Features
 
-## 🧱 Tech stack
+- **Artist search.** Type a name and get the top matching artist, their photo,
+  and their releases in one request. Suggestion chips (Radiohead, Kendrick
+  Lamar, Daft Punk, and more) fill the empty state.
+- **Release filters.** Toggle Albums, Singles & EPs, and Compilations
+  independently. At least one type always stays selected.
+- **Sorting.** Newest first, oldest first, or title A to Z.
+- **Album detail.** Click a release for its full tracklist with track
+  numbers (disc-aware for multi-disc albums), durations, explicit tags,
+  per-track Spotify links, label, and year. Close it with `Esc` or by
+  clicking the backdrop.
+- **Light and dark mode.** Follows your OS setting, and a button in the
+  top-right corner lets you override it. Your choice is saved in the browser
+  and applied before the page paints, so there is no flash on reload.
+- **Shareable URLs.** A search sets `?q=` in the address bar, so you can
+  bookmark or share results.
+- **Loading, empty, and error states.** Skeleton cards while fetching, a
+  message when nothing matches, and a retry button when a request fails.
+- **Accessible and responsive.** Fluid album grid, keyboard-navigable
+  controls, `aria` labels, and reduced-motion support.
+- **Resilient backend.** Caches the Spotify token and recent results in
+  memory, retries once on `429` (respecting `Retry-After`), paginates artist
+  albums and tracklists, and removes duplicate releases.
 
-| Layer    | Stack |
-| -------- | ----- |
-| Frontend | React 18, Vite 5, plain CSS (CSS variables for theming) |
-| Backend  | Node.js, Express — Spotify Client Credentials flow |
-| Data     | [Spotify Web API](https://developer.spotify.com/documentation/web-api) |
-| Tooling  | ESLint (`eslint:recommended` + React/Hooks rules), Concurrently |
+## Tech stack
 
-## 🚀 Getting started
+| Layer    | Stack                                                                    |
+| -------- | ------------------------------------------------------------------------ |
+| Frontend | React 18, Vite 5, plain CSS with variables for theming                   |
+| Backend  | Node.js, Express, Spotify Client Credentials flow                        |
+| Data     | [Spotify Web API](https://developer.spotify.com/documentation/web-api)   |
+| Tooling  | ESLint (`eslint:recommended` plus React and Hooks rules), Concurrently   |
 
-### 1. Install dependencies
+## Getting started
 
-```bash
-npm install
-```
+You need Node.js 18 or newer (the server uses the built-in `fetch`) and a free
+Spotify developer account.
 
-### 2. Add Spotify credentials
+1. **Install dependencies**
 
-Create an app at the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard),
-then copy the template and fill in your values:
+   ```bash
+   npm install
+   ```
 
-```bash
-cp .env.example .env
-```
+2. **Add Spotify credentials.** Create an app in the
+   [Spotify Developer Dashboard](https://developer.spotify.com/dashboard), then
+   copy the template and fill in your values:
 
-```env
-SPOTIFY_CLIENT_ID=your_client_id
-SPOTIFY_CLIENT_SECRET=your_client_secret
-```
+   ```bash
+   cp .env.example .env
+   ```
 
-> `.env` is gitignored — never commit real credentials. The server reads
-> them via the Client Credentials flow, so no user login or redirect URI is
-> required.
+   ```env
+   SPOTIFY_CLIENT_ID=your_client_id
+   SPOTIFY_CLIENT_SECRET=your_client_secret
+   ```
 
-### 3. Run it
+   `.env` is gitignored. The server uses the Client Credentials flow, so no
+   user login or redirect URI is needed.
 
-```bash
-npm run dev
-```
+3. **Run it**
 
-This starts the API server (`localhost:3001`) and the Vite dev server
-together. Open the URL Vite prints (default <http://localhost:5173>) — Vite
-proxies `/api/*` requests to the API server for you.
+   ```bash
+   npm run dev
+   ```
 
-## 📜 Scripts
+   This starts the API on `localhost:3001` and the Vite dev server together.
+   Open the URL Vite prints (default <http://localhost:5173>). Vite proxies
+   `/api/*` to the API for you.
 
-| Script                | Purpose                                  |
-| ---------------------- | ----------------------------------------- |
-| `npm run dev`          | API + client together, with hot reload    |
-| `npm run dev:client`   | Vite dev server only                      |
-| `npm run dev:server`   | API server only (`node --watch`)          |
-| `npm run build`        | Production build of the client → `dist/`  |
-| `npm start`            | Run the API server (production)           |
-| `npm run lint`         | ESLint over the whole project             |
+## Scripts
 
-## 🔌 API reference
+| Script               | Purpose                                 |
+| -------------------- | --------------------------------------- |
+| `npm run dev`        | API and client together, with hot reload |
+| `npm run dev:client` | Vite dev server only                    |
+| `npm run dev:server` | API server only (`node --watch`)        |
+| `npm run build`      | Production client build to `dist/`      |
+| `npm start`          | Run the API server (production)         |
+| `npm run lint`       | ESLint over the whole project           |
 
-The Express server exposes a small JSON API consumed by the React app.
+## API
 
-| Endpoint | Description |
-| --- | --- |
-| `GET /api/health` | `{ ok, spotifyConfigured }` — quick check that credentials are set. |
-| `GET /api/search?q=<artist>&groups=<types>` | Resolves the best-matching artist for `q` and returns their releases. `groups` is a comma-separated subset of `album,single,compilation,appears_on` (defaults to `album,single`). Response: `{ artist, groups, albums[] }`. |
-| `GET /api/album/:id` | Full detail for one album, including the complete tracklist. |
+The Express server exposes a small JSON API used by the React app.
 
-Responses are cached in memory for 10 minutes per query to stay well under
-Spotify's rate limits, and a `429` from Spotify is retried once automatically
-before being surfaced to the client.
+| Endpoint                                    | Description |
+| ------------------------------------------- | ----------- |
+| `GET /api/health`                           | `{ ok, spotifyConfigured }`. Checks that credentials are set. |
+| `GET /api/search?q=<artist>&groups=<types>` | Finds the best-matching artist for `q` and returns their releases. `groups` is a comma-separated subset of `album,single,compilation,appears_on` and defaults to `album,single`. Response: `{ artist, groups, albums[] }`. |
+| `GET /api/album/:id`                        | Full detail for one album, including the complete tracklist. |
 
-## 📁 Project structure
+Results are cached in memory for 10 minutes per query, and a `429` from
+Spotify is retried once before the error reaches the client.
+
+## Project structure
 
 ```
 Album Finder/
 ├─ api/
-│  └─ index.js       # Vercel serverless function entry (wraps server/app.js)
+│  └─ index.js        Vercel serverless entry (wraps server/app.js)
+├─ docs/
+│  └─ screenshot.png  README screenshot
 ├─ server/
-│  ├─ app.js          # Express app + all /api routes (shared by both entry points)
-│  ├─ index.js        # Local dev / single-service entry: app.js + static dist/ + listen()
-│  ├─ spotify.js       # Spotify API client: auth, search, albums, caching
-│  └─ load-env.js      # Minimal .env loader (no external dependency)
+│  ├─ app.js          Express app and all /api routes (shared by both entry points)
+│  ├─ index.js        Local and single-service entry: app.js + static dist/ + listen()
+│  ├─ spotify.js      Spotify client: auth, search, albums, caching
+│  └─ load-env.js     Minimal .env loader (no extra dependency)
 ├─ src/
-│  ├─ App.jsx         # UI: search, filters, sort, album grid, detail modal
-│  ├─ App.css          # Component styles
-│  ├─ index.css        # Theme tokens (light/dark) & resets
-│  └─ main.jsx          # React entry point
-├─ public/             # Static assets (favicon)
-├─ index.html
-├─ vite.config.js       # Dev server + /api proxy
-├─ vercel.json           # Routes /api/* to the serverless function
+│  ├─ App.jsx         UI: search, filters, sort, grid, album modal, theme toggle
+│  ├─ App.css         Component styles
+│  ├─ index.css       Theme tokens (light and dark) and resets
+│  └─ main.jsx        React entry point
+├─ public/            Static assets (favicon)
+├─ index.html         Also applies the saved theme before first paint
+├─ vite.config.js     Dev server and /api proxy
+├─ vercel.json        Routes /api/* to the serverless function
 └─ .env.example
 ```
 
-## 🛫 Deploying
+## Deploying
 
 The API routes live in [`server/app.js`](server/app.js) and are shared by two
-entry points, so the same backend logic runs unmodified on either platform:
+entry points, so the same backend code runs on either platform.
 
-### Vercel (recommended)
+### Vercel
 
-1. Import this repo at [vercel.com/new](https://vercel.com/new) — the Vite
-   frontend is auto-detected and built (`vite build` → `dist/`), and
+1. Import the repo at [vercel.com/new](https://vercel.com/new). The Vite
+   frontend is detected and built to `dist/`, and
    [`api/index.js`](api/index.js) deploys as a serverless function.
-   [`vercel.json`](vercel.json) rewrites every `/api/*` request to that
-   function, which resolves the sub-route internally.
-2. In the project's **Settings → Environment Variables**, add
-   `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET`.
-3. Deploy. No other configuration needed.
+   [`vercel.json`](vercel.json) rewrites every `/api/*` request to it.
+2. Under **Settings, Environment Variables**, add `SPOTIFY_CLIENT_ID` and
+   `SPOTIFY_CLIENT_SECRET`.
+3. Deploy.
 
-### Render / Railway / any Node host (single service)
+On Vercel the in-memory token and result cache only last while a function
+instance stays warm, so you will see fewer cache hits than on a long-running
+server.
+
+### Render, Railway, or any Node host
 
 1. **Build command:** `npm install && npm run build`
-2. **Start command:** `npm start` — runs [`server/index.js`](server/index.js),
-   which serves the built `dist/` folder *and* the API from one process on
+2. **Start command:** `npm start`. This runs [`server/index.js`](server/index.js),
+   which serves the built `dist/` folder and the API from one process on
    `PORT` (default `3001`).
-3. Set `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET` as real environment
-   variables (the built-in `.env` loader is a local-dev convenience and is
-   skipped if the file isn't present).
+3. Set `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET` as real environment
+   variables. The `.env` loader is skipped when the file doesn't exist.
 
-## 📄 License
+## License
 
 [MIT](LICENSE) © Mazhar Sourav
