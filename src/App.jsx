@@ -40,6 +40,50 @@ function formatYear(date) {
   return (date || '').slice(0, 4)
 }
 
+const THEME_KEY = 'theme'
+const DARK_QUERY = '(prefers-color-scheme: dark)'
+
+function readSavedTheme() {
+  try {
+    const saved = localStorage.getItem(THEME_KEY)
+    return saved === 'light' || saved === 'dark' ? saved : null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Light/dark theme. Follows the OS setting until the user clicks the toggle;
+ * after that their choice is saved and wins. index.html applies a saved
+ * choice before first paint, so this hook only mirrors it into state.
+ */
+function useTheme() {
+  const [saved, setSaved] = useState(readSavedTheme)
+  const [systemDark, setSystemDark] = useState(() => window.matchMedia(DARK_QUERY).matches)
+
+  useEffect(() => {
+    const media = window.matchMedia(DARK_QUERY)
+    const onChange = (event) => setSystemDark(event.matches)
+    media.addEventListener('change', onChange)
+    return () => media.removeEventListener('change', onChange)
+  }, [])
+
+  const theme = saved ?? (systemDark ? 'dark' : 'light')
+
+  function toggleTheme() {
+    const next = theme === 'dark' ? 'light' : 'dark'
+    document.documentElement.dataset.theme = next
+    try {
+      localStorage.setItem(THEME_KEY, next)
+    } catch {
+      // Storage unavailable (private mode); the choice just won't persist.
+    }
+    setSaved(next)
+  }
+
+  return [theme, toggleTheme]
+}
+
 function VinylIcon(props) {
   return (
     <svg viewBox="0 0 32 32" fill="none" aria-hidden="true" {...props}>
@@ -63,6 +107,33 @@ function GitHubIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
       <path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.78 1.2 1.78 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.3-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.75.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.26 5.69.41.36.78 1.07.78 2.16v3.2c0 .31.2.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z" />
+    </svg>
+  )
+}
+
+function MoonIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
+      <path
+        d="M20 14.5A8 8 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function SunIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
+      <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2" />
+      <path
+        d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
     </svg>
   )
 }
@@ -291,6 +362,7 @@ export default function App() {
   const [groups, setGroups] = useState(DEFAULT_GROUPS)
   const [sort, setSort] = useState('newest')
   const [selectedAlbumId, setSelectedAlbumId] = useState(null)
+  const [theme, toggleTheme] = useTheme()
 
   const runSearch = useCallback(
     async (term, groupList) => {
@@ -383,6 +455,19 @@ export default function App() {
   return (
     <div className="page">
       <div className="page__glow" aria-hidden="true" />
+
+      <button
+        type="button"
+        className="theme-toggle"
+        onClick={toggleTheme}
+        aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+      >
+        {theme === 'dark' ? (
+          <SunIcon className="theme-toggle__icon" />
+        ) : (
+          <MoonIcon className="theme-toggle__icon" />
+        )}
+      </button>
 
       <header className={searched ? 'hero hero--compact' : 'hero'}>
         <button
